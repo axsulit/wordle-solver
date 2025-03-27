@@ -45,6 +45,20 @@ def filter_possible_words(word_list, guess, feedback):
         if not valid: 
             continue
 
+        # check frequency constraints
+        for letter in set(guess):
+            count_in_word = word.count(letter)
+            required = required_counts.get(letter, 0)
+            # if the letter had an X, then the word must have the exact number of occurrences
+            if letter in letter_has_x:
+                if count_in_word != required:
+                    valid = False
+                    break
+            # if the letter had no X, then the word must have at least the number of occurrences
+            else:
+                if count_in_word < required:
+                    valid = False
+                    break
                
         if valid:
             possible.append(word)
