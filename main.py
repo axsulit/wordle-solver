@@ -5,6 +5,51 @@ def load_word_list(filename="5_letter_words.txt"):
     with open(filename, "r") as f:
         return [line.strip().lower() for line in f if line.strip()]
 
+def filter_possible_words(word_list, guess, feedback):
+    """
+    Filters word_list according to the guess and feedback.
+    Feedback codes:
+      Y - letter is in the correct position.
+      W - letter is in the word but in a different position.
+      X - letter is not in the word (or extra occurrence beyond Y/W).
+    """
+    guess = guess.lower()
+    required_counts = {} # counts of letters that must be in the word
+    letter_has_x = {}
+
+    for i, letter in enumerate(guess): # for each letter in the guess
+        code = feedback[i].upper()
+        if code in ["Y", "W"]:
+            required_counts[letter] = required_counts.get(letter, 0) + 1
+        if code == "X":
+            # Mark that letter had at least one X.
+            letter_has_x[letter] = True
+
+    possible = []
+    for word in word_list: 
+        valid = True
+        
+        # check position-specific constraints
+        for i, letter in enumerate(guess):
+            code = feedback[i].upper()
+            if code == "Y":
+                # letter must be exactly at this position
+                if word[i] != letter:
+                    valid = False
+                    break
+            elif code == "W":
+                # letter must appear somewhere in the word, but not at this position
+                if word[i] == letter or letter not in word:
+                    valid = False
+                    break
+        if not valid: 
+            continue
+
+               
+        if valid:
+            possible.append(word)
+
+    return possible
 
 if __name__ == "__main__":
 
@@ -35,6 +80,10 @@ if __name__ == "__main__":
         if feedback == "YYYYY":
             break
 
+        possible_words = filter_possible_words(possible_words, guess, feedback)
+        if not possible_words: # if no possible words, break the loop
+            print("No possible words found. Please double-check your inputs.")
+            break
 
         round_number += 1
         
