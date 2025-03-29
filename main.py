@@ -72,7 +72,7 @@ if __name__ == "__main__":
     possible_words = word_list[:]  # start with all words
     round_number = 1
 
-    while round_number <= 5:
+    while round_number <= 6:
 
         print(f"\nRound {round_number} - {len(possible_words)} possible words remain.")
         
